@@ -74,5 +74,5 @@ def get_gps_data(thread_name, timeOut):
             gps.close()
             #time.sleep(timeOut)
 
-
+# test
 threading.start_new_thread(get_gps_data("this_is_1", 1))

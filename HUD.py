@@ -30,6 +30,6 @@ def hud():
         cv2.imshow(window_name, frame)
         if cv2.waitKey(interframe_wait_ms) & 0x7F == ord('q'):
             break
-
+# test
     cap.release()
     cv2.destroyAllWindows()
