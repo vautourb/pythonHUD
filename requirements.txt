@@ -3,3 +3,7 @@ pip install pySerial
 pip Install pygame
 pip install opencv-python
 pip install cv2
+
+serial~=0.0.97
+pyserial~=3.5
+opencv-python~=4.5.3.56

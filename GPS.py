@@ -62,10 +62,6 @@ def get_gps_data():
     except serial.SerialException:
         print("There is no GPS Device Connected to this computer.")
 
-#        global global_longitude
-#        global global_latitude
-#        global global_cur_speed
-
         return global_longitude, global_longitude, global_cur_speed
     finally:
         if gps is not None:
