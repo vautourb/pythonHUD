@@ -73,10 +73,10 @@ class myThread(threading.Thread):
 
             return global_longitude, global_latitude, global_cur_speed
 
-        except serial.SerialException:
+        except serial.SerialException: # this gets processed
             print("There is no GPS Device Connected to this computer.")
 
-            return global_longitude, global_longitude, global_cur_speed
+            return global_longitude, global_longitude, global_cur_speed # this gets processed
         finally:
             if gps is not None:
                 gps.close()
