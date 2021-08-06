@@ -1,5 +1,3 @@
-import time
-import threading
 import serial
 
 global global_longitude
@@ -7,7 +5,7 @@ global global_latitude
 global global_cur_speed
 
 
-def get_gps_data(thread_name, timeOut):
+def get_gps_data():
     global global_longitude
     global global_latitude
     global global_cur_speed
@@ -72,7 +70,5 @@ def get_gps_data(thread_name, timeOut):
     finally:
         if gps is not None:
             gps.close()
-            #time.sleep(timeOut)
+            # time.sleep(timeOut)
 
-# test
-threading.start_new_thread(get_gps_data("this_is_1", 1))
