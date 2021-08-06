@@ -15,6 +15,10 @@ class myThread(threading.Thread):
         self.counter = counter
 
     def run(self):
+        print("Receiving GPS data..")
+        threadLock.acquire()
+
+        print_time(self.name, self.counter, 1) # This works up to here then goes to no GPS Device found
         global global_longitude
         global global_latitude
         global global_cur_speed
@@ -66,22 +70,26 @@ class myThread(threading.Thread):
                     global_longitude = longitude
                     global_latitude = latitude
                     global_cur_speed = cur_speed
-            return longitude, latitude, cur_speed
 
-        except serial.SerialException:
+            return global_longitude, global_latitude, global_cur_speed
+
+        except serial.SerialException: # this gets processed
             print("There is no GPS Device Connected to this computer.")
 
-            return global_longitude, global_longitude, global_cur_speed
+            return global_longitude, global_longitude, global_cur_speed # this gets processed
         finally:
             if gps is not None:
                 gps.close()
+                threadLock.release()
                 # time.sleep(timeOut)
 
 
 def print_time(threadName, delay, counter):
     while counter:
         time.sleep(delay)
+
         print("%s: %s" % (threadName, time.ctime(time.time())))
+
         counter -= 1
 
 
