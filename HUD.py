@@ -89,7 +89,7 @@ def hud_display():
         print("I made it step 1")
         ret, frame = cap.read()
         font = cv2.FONT_HERSHEY_SIMPLEX
-        print("Longitude : " + str(global_longitude) + "°" + " Latitude : " + str(global_latitude) + "°" + " Spd  : " + str(global_cur_speed) + " Kmh")
+        print("°" + "Lon : " + str(global_longitude) + " Lat : " + str(global_latitude) + "°" + " Spd  : " + str(global_cur_speed) + " Kmh")
         #       (live feed,        text,              position,font, scale,     BGR color)
         cv2.putText(frame, 'LONG : ' + str(global_longitude), (5, 25), font, 0.25, (255, 144, 30), 1, cv2.LINE_4)
         cv2.putText(frame, 'LAT  : ' + str(global_latitude), (5, 50), font, 0.25, (255, 144, 30), 1, cv2.LINE_4)
