@@ -17,6 +17,9 @@ class MySerialManager(Process):
         self.loop(ser)
 
     def loop(self, ser):
+        global global_longitude
+        global global_latitude
+        global global_cur_speed
 
         while True:
             ser_bytes = ser.readline()
@@ -60,7 +63,7 @@ class MySerialManager(Process):
                 #      global_longitude = longitude
                 #      global_latitude = latitude
                 #      global_cur_speed = cur_speed
-            return longitude, latitude, cur_speed
+            # return global_longitude, global_latitude, global_cur_speed
 
 
 if __name__ == "__main__":
