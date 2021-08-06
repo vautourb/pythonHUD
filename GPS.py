@@ -1,8 +1,8 @@
 import serial
 
-global global_longitude
-global global_latitude
-global global_cur_speed
+global_longitude = 0
+global_latitude = 0
+global_cur_speed = 0
 
 
 def get_gps_data():
