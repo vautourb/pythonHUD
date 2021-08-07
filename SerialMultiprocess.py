@@ -56,7 +56,7 @@ class MySerialManager(Process):
 
                         speed_nmea = data[7]
                         speed_kmh = float(speed_nmea) * 1.852
-                        cur_speed = '{0:.2f}'.format(speed_kmh)
+                        cur_speed = '{0:.1f}'.format(speed_kmh)
 
                         print("Longitude : " + longitude + "°" + data[6] + " Latitude : " + latitude + "°" + data[
                             4] + " Spd  : " + str(cur_speed) + " Km/h")
