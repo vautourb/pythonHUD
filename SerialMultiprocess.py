@@ -56,10 +56,10 @@ class MySerialManager(Process):
 
                         speed_nmea = data[7]
                         speed_kmh = float(speed_nmea) * 1.852
-                        cur_speed = str(speed_kmh)
+                        cur_speed = '{0:.2f}'.format(speed_kmh)
 
                         print("Longitude : " + longitude + "°" + data[6] + " Latitude : " + latitude + "°" + data[
-                            4] + " Spd  : " + cur_speed + " Kmh")
+                            4] + " Spd  : " + str(cur_speed) + " Km/h")
 
                         #      global_longitude = longitude
                         #      global_latitude = latitude
@@ -68,6 +68,7 @@ class MySerialManager(Process):
 
             except:
                 if data[0] != '$GPRMC':
+                    print("Lost Satellite Link")
                     MySerialManager()
 
 
