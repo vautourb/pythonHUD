@@ -3,10 +3,14 @@ import cv2
 from time import strftime
 import os
 
+
+
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 cv2.namedWindow('frame', cv2.WND_PROP_FULLSCREEN)
 cv2.setWindowProperty('frame', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 font = cv2.FONT_HERSHEY_COMPLEX_SMALL
+
+
 
 
 class VideoStreamWidget(object):
