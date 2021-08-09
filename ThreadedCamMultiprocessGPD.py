@@ -10,8 +10,8 @@ global_latitude = 0
 global_cur_speed = 0
 
 
-
 class camThread(threading.Thread):
+
     # Create a thread for each camera
     def __init__(self, previewName, camID):
         threading.Thread.__init__(self)
@@ -24,7 +24,6 @@ class camThread(threading.Thread):
         camPreview(self.previewName, self.camID)
 
 # Show Cameras on Display and Process any edits to the stream
-
 
 def camPreview(previewName, camID):
     cv2.namedWindow(previewName, cv2.WND_PROP_FULLSCREEN)
@@ -64,8 +63,8 @@ class MySerialManager(Process):
         self.loop(ser)
 
     def loop(self, ser):
-        global global_longitude
-        global global_latitude
+        return global_longitude
+        return global_latitude
         global global_cur_speed
 
         while True:
@@ -149,7 +148,7 @@ thread2 = camThread("IR Cam", 1)  # IR Camera
 thread3 = camThread("Thermal Cam", 2)  # Thermal Camera
 thread4 = camThread("NV Cam", 3)  # Night Vision Camera
 
-#  uNCOMMENT TO START THREADSSStart Threads
+#  UNCOMMENT TO START THREADS
 thread1.start()
 # thread2.start()
 # thread3.start()
