@@ -71,6 +71,11 @@ class MySerialManager(Process):
                     print("Lost Satellite Link")
                     MySerialManager()
 
+# The Manager class is given to act as a proxy for data structures
+# that can shuttle info back and forth for you between processes.
+# What you will do is create a special dict and list from a manager,
+# pass them into your methods, and operate on them locally.
+
 
 if __name__ == "__main__":
     msm = MySerialManager("COM5")
