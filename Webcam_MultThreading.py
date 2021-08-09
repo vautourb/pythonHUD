@@ -21,7 +21,7 @@ class camThread(threading.Thread):
 def camPreview(previewName, camID):
     cv2.namedWindow(previewName, cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty(previewName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-    cam = cv2.VideoCapture(camID)
+    cam = cv2.VideoCapture(camID, cv2.CAP_DSHOW)
     if cam.isOpened():
         rval, frame = cam.read()
     else:
