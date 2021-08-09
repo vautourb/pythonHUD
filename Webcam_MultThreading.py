@@ -1,6 +1,8 @@
 import datetime
 import cv2
 import threading
+import serial
+
 
 
 class camThread(threading.Thread):
@@ -46,10 +48,12 @@ def camPreview(previewName, camID):
 # Create threads as follows
 # overlay Thermal Cam onto IR cam work on that later Get all Cams Working First
 
+
 thread1 = camThread("Main Cam", 0)  # Primary Camera
 thread2 = camThread("IR Cam", 1)  # IR Camera
 thread3 = camThread("Thermal Cam", 2)  # Thermal Camera
 thread4 = camThread("NV Cam", 3)  # Night Vision Camera
+
 
 #  uNCOMMENT TO START THREADSSStart Threads
 thread1.start()
@@ -58,3 +62,5 @@ thread1.start()
 # thread4.start()
 print()
 print("Active threads", threading.activeCount())
+
+
