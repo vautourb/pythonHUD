@@ -49,7 +49,7 @@ def camPreview(previewName, camID):
 thread1 = camThread("Main Cam", 0)  # Primary Camera
 thread2 = camThread("IR Cam", 1)  # IR Camera
 thread3 = camThread("Thermal Cam", 2)  # Thermal Camera
-thread4 = camThread("Night Vision Cam", 3)  # Night Vision Camera
+thread4 = camThread("NV Cam", 3)  # Night Vision Camera
 
 #  uNCOMMENT TO START THREADSSStart Threads
 thread1.start()
