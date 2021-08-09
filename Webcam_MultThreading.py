@@ -47,10 +47,10 @@ class VideoStreamWidget(object):
             cv2.destroyAllWindows()
             exit(1)
 
-cam1 = cv2.VideoCapture(0)  # Front View Cam
-cam2 = cv2.VideoCapture(1)  # IR Cam
-cam3 = cv2.VideoCapture(2)  # Thermal Cam
-cam4 = cv2.VideoCapture(3)  # Night Vision
+# thread1 = VideoStreamWidget("Camera 1", 0)  # Main View Cam
+# thread2 = VideoStreamWidget("Camera 2", 1)  # IR Cam
+# thread3 = VideoStreamWidget("Camera 3", 2)  # Thermal Cam
+# thread4 = VideoStreamWidget("Camera 4", 3)  # Night Vision
 
 if __name__ == '__main__':
     video_stream_widget = VideoStreamWidget()
