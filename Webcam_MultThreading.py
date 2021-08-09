@@ -1,61 +1,40 @@
-import os
-from threading import Thread
-from time import strftime
 import cv2
+import threading
 
-os.environ['SDL_VIDEO_CENTERED'] = '1'
-cv2.namedWindow('frame', cv2.WND_PROP_FULLSCREEN)
-cv2.setWindowProperty('frame', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-font = cv2.FONT_HERSHEY_COMPLEX_SMALL
+class camThread(threading.Thread):
+    def __init__(self, previewName, camID):
+        threading.Thread.__init__(self)
+        self.previewName = previewName
+        self.camID = camID
+    def run(self):
+        print("Starting " + self.previewName)
+        camPreview(self.previewName, self.camID)
 
+def camPreview(previewName, camID):
+    cv2.namedWindow(previewName)
+    cam = cv2.VideoCapture(camID)
+    if cam.isOpened():
+        rval, frame = cam.read()
+    else:
+        rval = False
 
+    while rval:
+        cv2.imshow(previewName, frame)
+        rval, frame = cam.read()
+        key = cv2.waitKey(20)
+        if key == 27:  # exit on ESC
+            break
+    cv2.destroyWindow(previewName)
 
+# Create threads as follows
+thread1 = camThread("Camera 1", 0)   # Primary Camera
+thread2 = camThread("Camera 2", 1)  # IR Camera
+thread3 = camThread("Camera 3", 2)  # Thermal Camera
+thread4 = camThread("Camera 4", 3)  # Night Vision Camera
 
-
-class VideoStreamWidget(object):
-    def __init__(self, src=0):
-        self.capture = cv2.VideoCapture(src)
-        # Start the thread to read frames from the video stream
-        self.thread = Thread(target=self.update, args=())
-        self.thread.daemon = True
-        self.thread.start()
-
-    def update(self):
-        # Read the next frame from the stream in a different thread
-        while True:
-            if self.capture.isOpened():
-                (self.status, self.frame) = self.capture.read()
-
-            # time.sleep(.01)
-
-    def show_frame(self):
-
-        # Display text on frames in main program
-        # ft.putText(self.frame, 'TESTING', (5, 100), ft, 1, (255, 255, 0), 1, cv2.LINE_AA)
-        cv2.putText(self.frame, strftime("%Y-%m-%d" + "  " + "%H:%M:%S"), (175, 475), font, .8, (255, 255, 0), 1,
-                    cv2.LINE_8)
-        cv2.putText(self.frame, 'LON : ', (5, 15), font, .8, (255, 255, 0), 1, cv2.LINE_8)
-        cv2.putText(self.frame, 'LAT : ', (5, 35), font, .8, (255, 255, 0), 1, cv2.LINE_8)
-        cv2.putText(self.frame, 'SPD : ', (5, 55), font, .8, (255, 255, 0), 1, cv2.LINE_8)
-        cv2.putText(self.frame, 'BRG : ', (5, 75), font, .8, (255, 255, 0), 1, cv2.LINE_8)
-        # Display Webcam Live Feed
-        cv2.imshow('frame', self.frame)
-        key = cv2.waitKey(1)
-
-        if key == ord('q'):
-            self.capture.release()
-            cv2.destroyAllWindows()
-            exit(1)
-
-# thread1 = VideoStreamWidget("Camera 1", 0)  # Main View Cam
-# thread2 = VideoStreamWidget("Camera 2", 1)  # IR Cam
-# thread3 = VideoStreamWidget("Camera 3", 2)  # Thermal Cam
-# thread4 = VideoStreamWidget("Camera 4", 3)  # Night Vision
-
-if __name__ == '__main__':
-    video_stream_widget = VideoStreamWidget()
-    while True:
-        try:
-            video_stream_widget.show_frame()
-        except AttributeError:
-            pass
+thread1.start()
+thread2.start()
+thread3.start()
+thread4.start()
+print()
+print("Active threads", threading.activeCount())
