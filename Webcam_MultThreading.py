@@ -46,10 +46,10 @@ def camPreview(previewName, camID):
 # Create threads as follows
 
 
-thread1 = camThread("Camera 1", 0)  # Primary Camera
-thread2 = camThread("Camera 2", 1)  # IR Camera
-thread3 = camThread("Camera 3", 2)  # Thermal Camera
-thread4 = camThread("Camera 4", 3)  # Night Vision Camera
+thread1 = camThread("Main Cam", 0)  # Primary Camera
+thread2 = camThread("IR Cam", 1)  # IR Camera
+thread3 = camThread("Thermal Cam", 2)  # Thermal Camera
+thread4 = camThread("Night Vision Cam", 3)  # Night Vision Camera
 
 #  uNCOMMENT TO START THREADSSStart Threads
 thread1.start()
