@@ -44,7 +44,7 @@ def camPreview(previewName, camID):
     cv2.destroyWindow(previewName)
 
 # Create threads as follows
-
+# overlay Thermal Cam onto IR cam work on that later Get all Cams Working First
 
 thread1 = camThread("Main Cam", 0)  # Primary Camera
 thread2 = camThread("IR Cam", 1)  # IR Camera
