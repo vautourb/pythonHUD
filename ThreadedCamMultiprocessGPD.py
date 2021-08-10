@@ -5,9 +5,10 @@ import cv2
 import threading
 import serial
 
-global_longitude = 0
-global_latitude = 0
-global_cur_speed = 0
+longitude = 0
+latitude = 0
+cur_speed = 0
+
 
 
 class camThread(threading.Thread):
@@ -41,9 +42,9 @@ def camPreview(previewName, camID):
         today = datetime.datetime.now()
         date_time = today.strftime("%m/%d/%Y   %H:%M:%S.%f")[:-4]
         cv2.putText(frame, date_time, (225, 475), font, .3, (0, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(frame, 'LON :' + " " +  str(global_longitude), (5, 20), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(frame, 'LAT :' + " "+  str(global_latitude), (5, 40), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(frame, 'SPD :' + " "+  str(global_cur_speed), (5, 60), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'LON :' + " " +  str(longitude), (5, 20), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'LAT :' + " "+  str(latitude), (5, 40), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'SPD :' + " "+  str(cur_speed), (5, 60), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
         # cv2.putText(frame, 'BRG :' + " ",+  str(global_brg) (5, 80), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
         key = cv2.waitKey(20)
         if key == 27:  # exit on ESC
@@ -53,18 +54,25 @@ def camPreview(previewName, camID):
 # Create threads as follows
 # overlay Thermal Cam onto IR cam work on that later Get all Cams Working First
 
-class GPSThread(threading.Thread):
+class myGPSThread(threading.Thread):
+
+    def __init__(self, serial_port, baud_rate):
+
+        self.ser = serial.Serial(port=self.serial_port, baudrate=self.baud_rate)
+        self.port = "COM5"
+        self.baudrate = 9600
+
+    def run(self):
+        print( "Starting GPS")
+        self.end_event.set()
+
     def get_gps_data(self):
-        global global_longitude
-        global global_latitude
-        global global_cur_speed
-
-
+        self.gpsStr = self.ser.readline()
         gps = None
 
         try:
-            gps = serial.Serial('com5', 9600)
-            ser_bytes = gps.readline()
+            # gps = serial.Serial(self.ser)
+            ser_bytes = self.ser.readline()
             decoded_bytes = ser_bytes.decode("utf-8")
             data = decoded_bytes.split(",")
 
@@ -74,7 +82,7 @@ class GPSThread(threading.Thread):
                 lat_nmea = data[3]
                 lat_degrees = lat_nmea[:2]
                 if data[4] == 'S':
-                    latitude_degrees = float(lat_degrees) * -1
+                   latitude_degrees = float(lat_degrees) * -1
                 else:
                     latitude_degrees = float(lat_degrees)
                     # Change it back to a string and remove the .0
@@ -111,11 +119,11 @@ class GPSThread(threading.Thread):
         except serial.SerialException:
             print("There is no GPS Device Connected to this computer.")
 
-            return global_longitude, global_longitude, global_cur_speed
+            return longitude, longitude, cur_speed
         finally:
             if gps is not None:
                 gps.close()
-                # time.sleep(timeOut)
+
 
 
 # multiprocessing actually uses separate processes,
@@ -137,7 +145,7 @@ thread1 = camThread("Main Cam", 0)  # Primary Camera
 thread2 = camThread("IR Cam", 1)  # IR Camera
 thread3 = camThread("Thermal Cam", 2)  # Thermal Camera
 thread4 = camThread("NV Cam", 3)  # Night Vision Camera
-thread5 = GPSThread()
+thread5 = myGPSThread("GPS collection",)
 
 #  UNCOMMENT TO START THREADS
 thread1.start()

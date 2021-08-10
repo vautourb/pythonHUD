@@ -1,6 +1,7 @@
-import datetime
-import cv2
 import threading
+import cv2
+import datetime
+
 
 
 class camThread(threading.Thread):
@@ -42,23 +43,40 @@ def camPreview(previewName, camID):
         if key == 27:  # exit on ESC
             break
     cv2.destroyWindow(previewName)
-
-# Create threads as follows
-# overlay Thermal Cam onto IR cam work on that later Get all Cams Working First
-
-
-thread1 = camThread("Main Cam", 0)  # Primary Camera
-thread2 = camThread("IR Cam", 1)  # IR Camera
-thread3 = camThread("Thermal Cam", 2)  # Thermal Camera
-thread4 = camThread("NV Cam", 3)  # Night Vision Camera
+    print()
+    print("Active threads", threading.activeCount())
 
 
-#  uNCOMMENT TO START THREADSSStart Threads
-thread1.start()
-thread2.start()
-# thread3.start()
-# thread4.start()
-print()
-print("Active threads", threading.activeCount())
+threadLock = threading.Lock()
+threads = []
 
+# Create new threads
+#thread1 = HUDThread("Thread-1", 1)
+#thread2 = HUDThread("Thread-2", 2)
+#thread3 = HUDThread("Thread-GPS", 3)
+thread4 = camThread("Main Cam", 0)  # Primary Camera
+thread5 = camThread("IR Cam", 1)  # IR Camera
+thread6 = camThread("Thermal Cam", 2)  # Thermal Camera
+thread7 = camThread("NV Cam", 3)  # Night Vision Camera
+
+# Start new Threads
+#thread1.start()
+# thread2.start()
+#thread3.start()
+thread4.start()
+thread5.start()
+thread6.start()
+thread7.start()
+
+
+# Add threads to thread list
+#threads.append(thread1)
+#threads.append(thread2)
+#threads.append(thread3)
+threads.append(thread4)
+threads.append(thread5)
+threads.append(thread6)
+threads.append(thread7)
+
+# Wait for all threads to complete
 

@@ -71,22 +71,6 @@ class MySerialManager(Process):
                     print("Lost Satellite Link")
                     MySerialManager()
 
-
-# multiprocessing actually uses separate processes,
-# you cannot simply share global variables because they will be in completely
-# different "spaces" in memory. What you do to a global under one process will
-# not reflect in another. Though I admit that it seems confusing since the way
-# you see it, its all living right there in the same piece of code, so
-# "why shouldn't those methods have access to the global"?
-# Its harder to wrap your head around the idea that they will be running in
-# different processes.
-
-# The Manager class is given to act as a proxy for data structures
-# that can shuttle info back and forth for you between processes.
-# What you will do is create a special dict and list from a manager,
-# pass them into your methods, and operate on them locally.
-
-
 if __name__ == "__main__":
     msm = MySerialManager("COM5")
     try:
