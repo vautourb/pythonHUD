@@ -1,5 +1,8 @@
 from multiprocessing import Process
-
+import threading
+import datetime
+import cv2
+import csv
 import serial
 
 
@@ -27,7 +30,7 @@ class MySerialManager(Process):
                 decoded_bytes = ser_bytes.decode("utf-8")
                 data = decoded_bytes.split(",")
                 if data[0] == '$GPRMC':
-                    print(data)
+                    # print(data)
                     lat_nmea = data[3]
                     lat_degrees = lat_nmea[:2]
                     if data[4] == 'S':
@@ -58,7 +61,14 @@ class MySerialManager(Process):
                         speed_kmh = float(speed_nmea) * 1.852
                         cur_speed = '{0:.1f}'.format(speed_kmh)
 
-                        print("Longitude : " + longitude + "°" + data[6] + " Latitude : " + latitude + "°" + data[
+                        satLock = data[2]
+
+                        with open('GPSLog.csv', 'w', newline='') as GPSout:
+                            thewriter = csv.writer(GPSout)
+                            thewriter.writerow(str(longitude), str(latitude), str(cur_speed))
+                            GPSout.flush()
+
+                        print("Sat Lock : " + satLock + "Longitude : " + longitude + "°" + data[6] + " Latitude : " + latitude + "°" + data[
                             4] + " Spd  : " + str(cur_speed) + " Km/h")
 
                         #      global_longitude = longitude
@@ -66,10 +76,12 @@ class MySerialManager(Process):
                         #      global_cur_speed = cur_speed
                         # return global_longitude, global_latitude, global_cur_speed
 
+                else:
+                   if data[2] == 'V':
+                        MySerialManager()
             except:
-                if data[0] != '$GPRMC':
-                    print("Lost Satellite Link")
-                    MySerialManager()
+
+                print("GPS SIGNAL LOST!!! RETRYING...")
 
 if __name__ == "__main__":
     msm = MySerialManager("COM5")
