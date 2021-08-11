@@ -32,8 +32,9 @@ def camPreview(previewName, camID):
         rval, frame = cam.read()
         font = cv2.FONT_HERSHEY_DUPLEX
         today = datetime.datetime.now()
+
         date_time = today.strftime("%m/%d/%Y   %H:%M:%S.%f")[:-4]
-        cv2.putText(frame, date_time, (225, 475), font, .3, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, date_time, (225, 475), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
         cv2.putText(frame, 'LON :' + " ", (5, 20), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
         cv2.putText(frame, 'LAT :' + " ", (5, 40), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
         cv2.putText(frame, 'BRG :' + " ", (5, 60), font, .5, (0, 255, 255), 1, cv2.LINE_AA)

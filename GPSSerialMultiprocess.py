@@ -1,5 +1,4 @@
 from multiprocessing import Process
-
 import csv
 import serial
 
@@ -28,7 +27,7 @@ class MySerialManager(Process):
                 decoded_bytes = ser_bytes.decode("utf-8")
                 data = decoded_bytes.split(",")
                 if data[0] == '$GPRMC':
-                    # print(data)
+                    print(data)
                     lat_nmea = data[3]
                     lat_degrees = lat_nmea[:2]
                     if data[4] == 'S':
@@ -64,7 +63,7 @@ class MySerialManager(Process):
                         with open('GPSLog.csv', 'w', newline='') as GPSout:
                             thewriter = csv.writer(GPSout)
                             thewriter.writerow(str(longitude), str(latitude), str(cur_speed))
-                            GPSout.flush()
+                            #GPSout.flush()
 
                         print("Sat Lock : " + satLock + " " + "Longitude : " + longitude + "°" + data[6] + " Latitude : " + latitude + "°" + data[
                             4] + " Spd  : " + str(cur_speed) + " Km/h")
@@ -76,10 +75,14 @@ class MySerialManager(Process):
 
                 else:
                    if data[2] == 'V':
+                        print("GPS SIGNAL LOST!!! RETRYING...")
                         MySerialManager()
-            except:
 
-                print("GPS SIGNAL LOST!!! RETRYING...")
+            except:
+                print("exception")
+
+
+
 
 if __name__ == "__main__":
     msm = MySerialManager("COM5")
