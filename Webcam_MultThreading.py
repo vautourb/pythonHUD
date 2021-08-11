@@ -55,13 +55,11 @@ thread4 = camThread("NV Cam", 3)  # Night Vision Camera
 
 #  UNCOMMENT TO START THREADS
 thread1.start()
-#thread2.start()
-#thread3.start()
-#thread4.start()
+# thread2.start()
+# thread3.start()
+# thread4.start()
 
 
 # test threading
 # print()
 # print("Active threads", threading.activeCount())
-
-

@@ -1,7 +1,5 @@
 from multiprocessing import Process
-import threading
-import datetime
-import cv2
+
 import csv
 import serial
 
@@ -12,11 +10,11 @@ global_cur_speed = 0
 
 
 class MySerialManager(Process):
-    def __init__(self, serial_port, baudrate=9600, timeout=None):
+    def __init__(self, serial_port, baudrate=9600, timeout=1):
         super(MySerialManager, self).__init__(target=self.loop_iterator, args=(serial_port, baudrate, timeout))
 
     def loop_iterator(self, serial_port, baudrate, timeout):
-        ser = serial.Serial(serial_port, baudrate=baudrate, timeout=None)
+        ser = serial.Serial(serial_port, baudrate=baudrate, timeout=1)
         self.loop(ser)
 
     def loop(self, ser):
@@ -68,7 +66,7 @@ class MySerialManager(Process):
                             thewriter.writerow(str(longitude), str(latitude), str(cur_speed))
                             GPSout.flush()
 
-                        print("Sat Lock : " + satLock + "Longitude : " + longitude + "°" + data[6] + " Latitude : " + latitude + "°" + data[
+                        print("Sat Lock : " + satLock + " " + "Longitude : " + longitude + "°" + data[6] + " Latitude : " + latitude + "°" + data[
                             4] + " Spd  : " + str(cur_speed) + " Km/h")
 
                         #      global_longitude = longitude
