@@ -60,10 +60,10 @@ class MySerialManager(Process):
 
                         satLock = data[2]
 
-                        with open('GPSLog.csv', 'w', newline='') as GPSout:
+                        with open('GPSLog.csv', 'w+') as GPSout:
                             thewriter = csv.writer(GPSout)
-                            thewriter.writerow(str(longitude), str(latitude), str(cur_speed))
-                            #GPSout.flush()
+                            thewriter.writerow(longitude, latitude, cur_speed)
+                            GPSout.flush()
 
                         print("Sat Lock : " + satLock + " " + "Longitude : " + longitude + "°" + data[6] + " Latitude : " + latitude + "°" + data[
                             4] + " Spd  : " + str(cur_speed) + " Km/h")
@@ -74,12 +74,11 @@ class MySerialManager(Process):
                         # return global_longitude, global_latitude, global_cur_speed
 
                 else:
-                   if data[2] == 'V':
-                        print("GPS SIGNAL LOST!!! RETRYING...")
-                        MySerialManager()
+                   print("GPS SIGNAL LOST!!! RETRYING...")
+                   MySerialManager()
 
             except:
-                print("exception")
+                print("")
 
 
 
