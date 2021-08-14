@@ -5,10 +5,10 @@ import serial
 import serial.tools.list_ports
 
 # Serial port variables
-print('Search...')
+print('Searching for COM Ports...')
 ports = serial.tools.list_ports.comports(include_links=False)
 for port in ports :
-    print('Find port ' + port.device)
+    print('Found port : ' + port.device)
 baud = 9600
 serial_port = serial.Serial(port.device, baud, timeout=0)
 
@@ -52,9 +52,9 @@ def camPreview(previewName, camID):
 
         date_time = today.strftime("%m/%d/%Y   %H:%M:%S.%f")[:-4]
         cv2.putText(frame, date_time, (225, 475), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(frame, 'LON :' + " " + str(longitude), (5, 20), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(frame, 'LAT :' + " " + str(latitude), (5, 40), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(frame, 'SAT :' + " " + str(satLock), (5, 60), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'LON :' + " " + str(longitude), (5, 20), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'LAT :' + " " + str(latitude), (5, 40), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'SAT :' + " " + str(satLock), (5, 60), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
         # cv2.putText(frame, 'SPD :' + " " + str(cur_speed), (5, 80), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
         key = cv2.waitKey(20)
         if key == 27:  # exit on ESC
@@ -75,7 +75,7 @@ class serThread(threading.Thread):
         read_from_port(serial_port)
 
 
-def read_from_port(ser):
+def read_from_port(ser, ):
     while True:
 
         global longitude
@@ -156,6 +156,6 @@ thread5.start()
 
 
 # test threading
-# print()
+print()
 print("Active threads", threading.activeCount())
 print()
