@@ -5,6 +5,7 @@ import serial
 import serial.tools.list_ports
 
 # Serial port variables
+# AutoDetect Comports and Print Port name and Device Connected
 print('Searching for COM Ports...')
 ports = serial.tools.list_ports.comports(include_links=False)
 for port in ports:
@@ -66,13 +67,16 @@ class serThread(threading.Thread):
     # Create a thread for each serial port
     def __init__(self, serName, serID):
         threading.Thread.__init__(self)
+        self.lock = threading.Lock()
         self.serName = serName
         self.serID = serID
     # Open Available Serial Ports
 
     def run(self):
         print("Starting " + self.serName)
+        self.lock.acquire()
         read_from_port(serial_port)
+        self.lock.release()
 
 
 def read_from_port(ser, ):
