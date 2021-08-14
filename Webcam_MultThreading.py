@@ -136,6 +136,7 @@ thread4 = camThread("NV Cam", 3)  # Night Vision Camera
 
 # Serial Port Threads
 thread5 = serThread('USB GPS', serial_port)
+thread5.setDaemon(True)
 
 
 #  UNCOMMENT TO START THREADS
@@ -152,3 +153,4 @@ thread5.start()
 # test threading
 # print()
 print("Active threads", threading.activeCount())
+print()
