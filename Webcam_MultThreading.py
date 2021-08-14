@@ -123,16 +123,17 @@ thread3 = camThread("Thermal Cam", 2)  # Thermal Camera
 thread4 = camThread("NV Cam", 3)  # Night Vision Camera
 
 # Serial Port Threads
-thread5 = threading.Thread("GPS DATA", target=read_from_port, args=(serial_port,))
+thread5 = threading.Thread(target=read_from_port, args=(serial_port,))
 
 
 #  UNCOMMENT TO START THREADS
-
+# Camera Threads Start
 thread1.start()
 # thread2.start()
 # thread3.start()
 # thread4.start()
-# Serial Port Threads
+
+# Serial Port Threads Start
 thread5.start()
 
 

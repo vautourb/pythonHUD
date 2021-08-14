@@ -9,13 +9,26 @@ baud = 9600
 serial_port = serial.Serial(port, baud, timeout=0)
 
 
-def handle_data(data):
-    print(data)
+class serThread(threading.Thread):
+    # Create a thread for each camera
+    def __init__(self, serName, serID):
+        threading.Thread.__init__(self)
+        self.serName = serName
+        self.serID = serID
+    # Open Available Cameras
+
+    def run(self):
+        print("Starting " + self.serName)
+        read_from_port(serial_port)
+
+#def handle_data(data):
+#    print(data)
 
 
 def read_from_port(ser):
     while True:
         try:
+
             ser_bytes = ser.readline()
             decoded_bytes = ser_bytes.decode("utf-8")
             data = decoded_bytes.split(",")
@@ -53,11 +66,11 @@ def read_from_port(ser):
 
                     satLock = data[2]
 
-                    with open('GPSLog.csv', 'w+') as GPSout:
-                        thewriter = csv.writer(GPSout)
-                        thewriter.writerow(longitude, latitude, cur_speed)
+                    #with open('GPSLog.csv', 'w+') as GPSout:
+                        #thewriter = csv.writer(GPSout)
+                        #thewriter.writerow(longitude, latitude, cur_speed)
                         #GPSout.flush()
-
+                    print("Active threads", threading.activeCount())
                     print("Sat Lock : " + satLock + " " + "Longitude : " + longitude + "°" + data[
                         6] + " Latitude : " + latitude + "°" + data[
                               4] + " Spd  : " + str(cur_speed) + " Km/h")
@@ -65,5 +78,6 @@ def read_from_port(ser):
             print("Lost Signal")
 
 
-thread = threading.Thread(target=read_from_port, args=(serial_port,))
+thread = serThread("USB GPS", serial_port)
+# thread = threading.Thread("USB GPS", target=serThread, args=(serial_port,))
 thread.start()
