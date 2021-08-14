@@ -9,8 +9,8 @@ import serial.tools.list_ports
 print('Searching for COM Ports...')
 ports = serial.tools.list_ports.comports(include_links=False)
 for port in ports:
-    print('Found port : ' + port.device + " : Details : " + str(port))
-baud = 128000
+    print('Found port : ' + port.device + " : Details : " + str(port) + " : " + str(port.pid))
+baud = 9600
 serial_port = serial.Serial(port.device, baud, timeout=0)
 
 #GPS Variables
@@ -18,6 +18,8 @@ latitude = 0
 longitude = 0
 cur_speed = 0
 satLock = 0
+LongitudeDegrees = 0
+LatitudeDegrees = 0
 
 
 
@@ -53,8 +55,8 @@ def camPreview(previewName, camID):
 
         date_time = today.strftime("%m/%d/%Y   %H:%M:%S.%f")[:-4]
         cv2.putText(frame, date_time, (225, 475), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(frame, 'LON :' + " " + str(longitude), (5, 20), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(frame, 'LAT :' + " " + str(latitude), (5, 40), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'LON :' + " " + str(longitude) + " " + str(LongitudeDegrees), (5, 20), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'LAT :' + " " + str(latitude) + " " + str(LatitudeDegrees), (5, 40), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
         cv2.putText(frame, 'SAT :' + " " + str(satLock), (5, 60), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
         # cv2.putText(frame, 'SPD :' + " " + str(cur_speed), (5, 80), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
         key = cv2.waitKey(20)
@@ -86,6 +88,8 @@ def read_from_port(ser, ):
         global latitude
         global cur_speed
         global satLock
+        global LongitudeDegrees
+        global LatitudeDegrees
 
         try:
 
@@ -125,20 +129,23 @@ def read_from_port(ser, ):
                     cur_speed = '{0:.1f}'.format(speed_kmh)
 
                     satLock = data[2]
+                    LongitudeDegrees = data[6]
+                    LatitudeDegrees = data[4]
 
-                    #with open('GPSLog.csv', 'w+') as GPSout:
-                        #thewriter = csv.writer(GPSout)
-                        #thewriter.writerow(longitude, latitude, cur_speed)
-                        #GPSout.flush()
+                    print()
                     print("Active threads", threading.activeCount())
                     print("Sat Lock : " + satLock + " " + "Longitude : " + longitude + "°" + data[
                         6] + " Latitude : " + latitude + "°" + data[
                               4] + " Spd  : " + str(cur_speed) + " Km/h")
+                    print()
         except:
+            print()
+            print("Active threads", threading.activeCount())
             print("Lost Signal")
-# overlay Thermal Cam onto IR cam work on that later Get all Cams Working First
 
 # Camera Threads
+
+
 thread1 = camThread("Main Cam", 0)  # Primary Camera
 thread2 = camThread("IR Cam", 1)  # IR Camera
 thread3 = camThread("Thermal Cam", 2)  # Thermal Camera
