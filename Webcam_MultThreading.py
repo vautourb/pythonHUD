@@ -7,9 +7,9 @@ import serial.tools.list_ports
 # Serial port variables
 print('Searching for COM Ports...')
 ports = serial.tools.list_ports.comports(include_links=False)
-for port in ports :
-    print('Found port : ' + port.device)
-baud = 9600
+for port in ports:
+    print('Found port : ' + port.device + " : Details : " + str(port))
+baud = 128000
 serial_port = serial.Serial(port.device, baud, timeout=0)
 
 #GPS Variables
