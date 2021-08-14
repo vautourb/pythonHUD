@@ -71,10 +71,12 @@ class serThread(threading.Thread):
 
 def read_from_port(ser):
     while True:
+
         global longitude
         global latitude
         global cur_speed
         global satLock
+
         try:
 
             ser_bytes = ser.readline()
