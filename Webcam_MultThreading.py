@@ -1,7 +1,6 @@
 import datetime
 import cv2
 import threading
-import csv
 import serial
 
 # Serial port variables
@@ -56,21 +55,18 @@ def camPreview(previewName, camID):
             break
     cv2.destroyWindow(previewName)
 
-# Create threads as follows
+# Create serial threads as follows
 class serThread(threading.Thread):
-    # Create a thread for each camera
+    # Create a thread for each serial port
     def __init__(self, serName, serID):
         threading.Thread.__init__(self)
         self.serName = serName
         self.serID = serID
-    # Open Available Cameras
+    # Open Available Serial Ports
 
     def run(self):
         print("Starting " + self.serName)
         read_from_port(serial_port)
-
-#def handle_data(data):
-#    print(data)
 
 
 def read_from_port(ser):
@@ -141,7 +137,6 @@ thread5 = serThread('USB GPS', serial_port)
 thread5.setDaemon(True)
 
 
-#  UNCOMMENT TO START THREADS
 # Camera Threads Start
 thread1.start()
 # thread2.start()
