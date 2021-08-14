@@ -13,6 +13,7 @@ serial_port = serial.Serial(port, baud, timeout=0)
 latitude = 0
 longitude = 0
 cur_speed = 0
+satLock = 0
 
 class camThread(threading.Thread):
     # Create a thread for each camera
@@ -48,7 +49,7 @@ def camPreview(previewName, camID):
         cv2.putText(frame, date_time, (225, 475), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
         cv2.putText(frame, 'LON :' + " " + str(longitude), (5, 20), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
         cv2.putText(frame, 'LAT :' + " " + str(latitude), (5, 40), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
-        # cv2.putText(frame, 'BRG :' + " ", (5, 60), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'SAT :' + " " + str(satLock), (5, 60), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
         # cv2.putText(frame, 'SPD :' + " " + str(cur_speed), (5, 80), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
         key = cv2.waitKey(20)
         if key == 27:  # exit on ESC
@@ -77,6 +78,7 @@ def read_from_port(ser):
         global longitude
         global latitude
         global cur_speed
+        global satLock
         try:
 
             ser_bytes = ser.readline()
