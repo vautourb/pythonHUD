@@ -2,17 +2,23 @@ import datetime
 import cv2
 import threading
 import serial
+import serial.tools.list_ports
 
 # Serial port variables
-port = 'COM5'
+print('Search...')
+ports = serial.tools.list_ports.comports(include_links=False)
+for port in ports :
+    print('Find port ' + port.device)
 baud = 9600
-serial_port = serial.Serial(port, baud, timeout=0)
+serial_port = serial.Serial(port.device, baud, timeout=0)
 
 #GPS Variables
 latitude = 0
 longitude = 0
 cur_speed = 0
 satLock = 0
+
+
 
 class camThread(threading.Thread):
     # Create a thread for each camera
