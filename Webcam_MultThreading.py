@@ -96,7 +96,9 @@ def read_from_port(ser, ):
             ser_bytes = ser.readline()
             decoded_bytes = ser_bytes.decode("utf-8")
             data = decoded_bytes.split(",")
+
             if data[0] == '$GPRMC':
+                print("Received From COM5")
                 print(data)
                 lat_nmea = data[3]
                 lat_degrees = lat_nmea[:2]
@@ -152,7 +154,7 @@ thread3 = camThread("Thermal Cam", 2)  # Thermal Camera
 thread4 = camThread("NV Cam", 3)  # Night Vision Camera
 
 # Serial Port Threads
-thread5 = serThread('USB GPS', serial_port)
+thread5 = serThread("USB GPS", serial_port)
 thread5.setDaemon(True)
 
 
