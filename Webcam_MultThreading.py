@@ -56,8 +56,20 @@ def camPreview(previewName, camID):
     cv2.destroyWindow(previewName)
 
 # Create threads as follows
-def handle_data(data):
-    print(data)
+class serThread(threading.Thread):
+    # Create a thread for each camera
+    def __init__(self, serName, serID):
+        threading.Thread.__init__(self)
+        self.serName = serName
+        self.serID = serID
+    # Open Available Cameras
+
+    def run(self):
+        print("Starting " + self.serName)
+        read_from_port(serial_port)
+
+#def handle_data(data):
+#    print(data)
 
 
 def read_from_port(ser):
@@ -65,8 +77,8 @@ def read_from_port(ser):
         global longitude
         global latitude
         global cur_speed
-
         try:
+
             ser_bytes = ser.readline()
             decoded_bytes = ser_bytes.decode("utf-8")
             data = decoded_bytes.split(",")
@@ -104,11 +116,11 @@ def read_from_port(ser):
 
                     satLock = data[2]
 
-                    with open('GPSLog.csv', 'w') as GPSout:
-                        thewriter = csv.writer(GPSout)
-                        thewriter.writerow(longitude, latitude, cur_speed)
+                    #with open('GPSLog.csv', 'w+') as GPSout:
+                        #thewriter = csv.writer(GPSout)
+                        #thewriter.writerow(longitude, latitude, cur_speed)
                         #GPSout.flush()
-
+                    print("Active threads", threading.activeCount())
                     print("Sat Lock : " + satLock + " " + "Longitude : " + longitude + "°" + data[
                         6] + " Latitude : " + latitude + "°" + data[
                               4] + " Spd  : " + str(cur_speed) + " Km/h")
@@ -123,7 +135,7 @@ thread3 = camThread("Thermal Cam", 2)  # Thermal Camera
 thread4 = camThread("NV Cam", 3)  # Night Vision Camera
 
 # Serial Port Threads
-thread5 = threading.Thread(target=read_from_port, args=(serial_port,))
+thread5 = serThread('USB GPS', serial_port)
 
 
 #  UNCOMMENT TO START THREADS

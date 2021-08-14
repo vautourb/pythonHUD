@@ -77,7 +77,10 @@ def read_from_port(ser):
         except:
             print("Lost Signal")
 
+# Create Serial Threads
+thread = serThread('USB GPS', serial_port)
+# thread2 = serThread('USB H/R', serial_port)
 
-thread = serThread("USB GPS", serial_port)
-# thread = threading.Thread("USB GPS", target=serThread, args=(serial_port,))
+# Start Serial Threads
 thread.start()
+# thread2.start()
