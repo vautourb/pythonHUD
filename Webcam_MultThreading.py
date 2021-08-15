@@ -3,6 +3,15 @@ import cv2
 import threading
 import serial
 import serial.tools.list_ports
+import googlemaps
+import webview
+import time
+
+# Google Maps info
+gmaps = googlemaps.Client(key='AIzaSyA2JzMu4rLAuzid1XBcBSY2CJpvkHvqt0E')
+
+
+
 
 # Serial port variables
 # AutoDetect Comports and Print Port name and Device Connected
@@ -20,8 +29,6 @@ cur_speed = 0
 satLock = 0
 LongitudeDegrees = 0
 LatitudeDegrees = 0
-
-
 
 class camThread(threading.Thread):
     # Create a thread for each camera
@@ -144,6 +151,9 @@ def read_from_port(ser, ):
             print()
             print("Active threads", threading.activeCount())
             print("Lost Signal")
+
+
+
 
 # Camera Threads
 
