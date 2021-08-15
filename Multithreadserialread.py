@@ -19,7 +19,8 @@ class serThread(threading.Thread):
 
     def run(self):
         print("Starting " + self.serName)
-        read_from_port(serial_port)
+        port = read_from_port(serial_port)
+
 
 #def handle_data(data):
 #    print(data)

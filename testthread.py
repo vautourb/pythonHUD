@@ -2,7 +2,8 @@ import threading
 import cv2
 import datetime
 
-
+latitude = 46.322478
+longitude = -79.456345
 
 class camThread(threading.Thread):
     # Create a thread for each camera
@@ -22,7 +23,7 @@ class camThread(threading.Thread):
 def camPreview(previewName, camID):
     cv2.namedWindow(previewName, cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty(previewName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-    cam = cv2.VideoCapture(camID, cv2.CAP_DSHOW)
+    cam = cv2.VideoCapture("https://satellites.pro/#" + str(latitude) + ',' + str(longitude) + ',19', cv2.CAP_DSHOW)
     if cam.isOpened():
         rval, frame = cam.read()
     else:

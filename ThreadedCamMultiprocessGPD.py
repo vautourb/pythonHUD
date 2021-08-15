@@ -4,11 +4,23 @@ import datetime
 import cv2
 import threading
 import serial
+import webview
 
 longitude = 0
 latitude = 0
 cur_speed = 0
+miniMapurl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(longitude) + '&zoom=18&size=512x512&maptype=hybrid&key=AIzaSyDg0SwqnAZuPSr86Z8XlJk65atfFqLvAjw'
 
+
+def miniMap(window):
+    global miniMapurl
+    window = webview.create_window(miniMapurl, x=3075, y=1450, width=512, height=512, on_top=True, frameless=True)
+
+
+#window = webview.create_window(miniMapurl, x=3075, y=1450, width=512, height=512, on_top=True, frameless=True)
+webview.start(miniMap, window)
+# anything below this line will be executed after program is finished executing
+pass
 
 
 class camThread(threading.Thread):
