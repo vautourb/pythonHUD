@@ -4,6 +4,7 @@ pip Install pygame
 pip install opencv-python
 pip install cv2
 pip install opencv-contrib-python
+pip install pywebview
 
 
 serial~=0.0.97

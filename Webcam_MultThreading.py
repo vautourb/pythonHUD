@@ -8,7 +8,7 @@ import webview
 import time
 
 # Google Maps info
-gmaps = googlemaps.Client(key='')
+gmaps = googlemaps.Client(key='AIzaSyA2JzMu4rLAuzid1XBcBSY2CJpvkHvqt0E')
 
 
 
@@ -34,17 +34,17 @@ LatitudeDegrees = 0
 
 miniMapurl = ('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(
     longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude) + ',' + str(
-    longitude) + '&zoom=18&size=600x600&maptype=hybrid&key=')
+    longitude) + '&zoom=18&size=600x600&maptype=hybrid&key=AIzaSyDg0SwqnAZuPSr86Z8XlJk65atfFqLvAjw')
 
 
-def change_url(window):
+def miniMap(window):
     # wait a few seconds before changing url:
     global miniMapurl
     while True:
         miniMapurl=('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(
-            longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude) + ',' + str(longitude) + '&zoom=18&size=600x600&maptype=hybrid&key=')
+            longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude) + ',' + str(longitude) + '&zoom=18&size=600x600&maptype=hybrid&key=AIzaSyDg0SwqnAZuPSr86Z8XlJk65atfFqLvAjw')
 
-        time.sleep(2)
+        time.sleep(1.2)
         print("changed webpage again")
 
     # change url:
@@ -195,6 +195,7 @@ thread5.setDaemon(True)
 
 # Camera Threads Start
 thread1.start()
+
 # thread2.start()
 # thread3.start()
 # thread4.start()
@@ -209,4 +210,4 @@ print("Active threads", threading.activeCount())
 print()
 if __name__ == '__main__':
     window = webview.create_window(miniMapurl, x=3075, y=1450, width=512, height=512, on_top=True, frameless=True)
-    webview.start(change_url, window)
+    webview.start(miniMap, window)
