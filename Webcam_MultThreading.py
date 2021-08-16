@@ -8,7 +8,7 @@ import webview
 import time
 
 # Google Maps info
-gmaps = googlemaps.Client(key='AIzaSyA2JzMu4rLAuzid1XBcBSY2CJpvkHvqt0E')
+gmaps = googlemaps.Client(key='')
 
 
 
@@ -30,6 +30,30 @@ satLock = 0
 LongitudeDegrees = 0
 LatitudeDegrees = 0
 
+#miniMap Variables
+
+miniMapurl = ('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(
+    longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude) + ',' + str(
+    longitude) + '&zoom=18&size=600x600&maptype=hybrid&key=')
+
+
+def change_url(window):
+    # wait a few seconds before changing url:
+    global miniMapurl
+    while True:
+        miniMapurl=('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(
+            longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude) + ',' + str(longitude) + '&zoom=18&size=600x600&maptype=hybrid&key=')
+
+        time.sleep(2)
+        print("changed webpage again")
+
+    # change url:
+        window.load_url(miniMapurl)
+
+# anything below this line will be executed after program is finished executing
+pass
+
+
 class camThread(threading.Thread):
     # Create a thread for each camera
     def __init__(self, previewName, camID):
@@ -47,9 +71,10 @@ class camThread(threading.Thread):
 
 def camPreview(previewName, camID):
     cv2.namedWindow(previewName, cv2.WND_PROP_FULLSCREEN)
-    cv2.setWindowProperty(previewName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
     cam = cv2.VideoCapture(camID, cv2.CAP_DSHOW)
     if cam.isOpened():
+        cv2.setWindowProperty(previewName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
         rval, frame = cam.read()
     else:
         rval = False
@@ -117,7 +142,7 @@ def read_from_port(ser, ):
                     latitude_degrees = str(latitude_degrees).strip('.0')
                     lat_ddd = lat_nmea[2:10]
                     lat_mmm = float(lat_ddd) / 60
-                    lat_mmm = str(lat_mmm).strip('0.')[:8]
+                    lat_mmm = str(lat_mmm).strip('0.')[:6]
                     latitude = latitude_degrees + "." + lat_mmm
                     # Convert Longitude to decimal Coordinates
                     long_nmea = data[5]
@@ -130,7 +155,7 @@ def read_from_port(ser, ):
                     longitude_degrees = str(longitude_degrees).strip('.0')
                     long_ddd = long_nmea[3:10]
                     long_mmm = float(long_ddd) / 60
-                    long_mmm = str(long_mmm).strip('0.')[:8]
+                    long_mmm = str(long_mmm).strip('0.')[:6]
                     longitude = longitude_degrees + "." + long_mmm
 
                     speed_nmea = data[7]
@@ -182,3 +207,6 @@ thread5.start()
 print()
 print("Active threads", threading.activeCount())
 print()
+if __name__ == '__main__':
+    window = webview.create_window(miniMapurl, x=3075, y=1450, width=512, height=512, on_top=True, frameless=True)
+    webview.start(change_url, window)

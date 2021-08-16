@@ -6,7 +6,7 @@ import time
 from time import sleep
 latitude = 46.346940
 longitude = -79.437160
-miniMapurl = ('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(longitude) + '&zoom=18&size=512x512&maptype=hybrid&key=)
+miniMapurl = ('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(longitude) + '&zoom=18&size=512x512&maptype=hybrid&key=AIzaSyDg0SwqnAZuPSr86Z8XlJk65atfFqLvAjw')
 
 def change_url(window):
     # wait a few seconds before changing url:
