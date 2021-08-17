@@ -2,21 +2,16 @@ import datetime
 import os
 import webbrowser
 from threading import Thread
-
+from queue import Queue  # Python 3 import
 import psutil
 import pyautogui
 import pyttsx3
 import wikipedia
+import speech_recognition as sr
 
 assistant = "Tombs"
 user = "Blaine"
 
-try:
-    from queue import Queue  # Python 3 import
-except ImportError:
-    from Queue import Queue  # Python 2 import
-
-import speech_recognition as sr
 
 
 r = sr.Recognizer()
@@ -39,6 +34,7 @@ def speak(audio):
     # Blocks while processing all the currently
     # queued commands
     engine.runAndWait()
+
 
 def greet():
     hour = datetime.datetime.now().hour
@@ -81,6 +77,7 @@ def tellTime():
     min = time[14:16]
     speak("The time sir is" + hour + "Hours and" + min + "Minutes")
 
+
 def recognize_worker():
     # this runs in a background thread
     while True:
@@ -92,10 +89,10 @@ def recognize_worker():
         try:
             # for testing purposes, we're just using the default API key
             # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
-            query = r.recognize_google(audio).lower( )
+            query = r.recognize_google(audio).lower()
             print("Google Speech Recognition thinks you said " + r.recognize_google(audio))
 
-            #speak("Google Speech Recognition thinks you said " + r.recognize_google(audio))
+            # speak("Google Speech Recognition thinks you said " + r.recognize_google(audio))
 
             if "open google" in query:
                 speak("Opening google ")
@@ -112,9 +109,6 @@ def recognize_worker():
                 tellTime()
                 continue
             elif "from wikipedia" in query:
-
-                # if any one wants to have a information
-                # from wikipedia
                 speak("Checking the wikipedia ")
                 query = query.replace("wikipedia", "")
 
@@ -161,6 +155,8 @@ def recognize_worker():
                 maps_arg = webbrowser.open(location_url)
                 os.system(maps_arg)
                 continue
+            # system info commands
+
             elif "cpu" in query:
                 speak(f"Cpu is at {str(psutil.cpu_percent())} percent")
                 continue
@@ -168,10 +164,10 @@ def recognize_worker():
                 ram_Used = psutil.virtual_memory()
                 speak(f"RAM is at {str(ram_Used.percent)} percent")
                 continue
-#########################################################################
-#
-#                  WINDOWS COMMANDS
-#
+            #########################################################################
+            #
+            #                  WINDOWS COMMANDS
+            #
             elif "lock computer" in query:
                 pyautogui.keyDown('win')
                 pyautogui.press('i')
@@ -220,10 +216,10 @@ def recognize_worker():
                 ###############################################
 
 
-#########################################################################
-#
-#               WINDOWS PROGRAM OPTIONS
-#
+            #########################################################################
+            #
+            #               WINDOWS PROGRAM OPTIONS
+            #
 
             elif "show desktop" in query:
                 pyautogui.keyDown('win')
@@ -284,10 +280,10 @@ def recognize_worker():
                 pyautogui.press('printscreen')
                 continue
 
-#########################################################################
-#
-#           QUIT PROGRAM
-#
+            #########################################################################
+            #
+            #           QUIT PROGRAM
+            #
             elif "offline" in query:
                 hour = datetime.datetime.now().hour
                 if (hour >= 21) and (hour < 6):
@@ -312,7 +308,7 @@ with sr.Microphone() as source:
     try:
         while True:  # repeatedly listen for phrases and put the resulting audio on the audio processing job queue
             audio_queue.put(r.listen(source))
-            # r.adjust_for_ambient_noise(source, duration=.05)
+            r.adjust_for_ambient_noise(source, duration=.05)
     except KeyboardInterrupt:  # allow Ctrl + C to shut down the program
         pass
 

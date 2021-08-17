@@ -1,13 +1,9 @@
 import datetime
-import cv2
 import threading
-import serial.tools.list_ports
-import googlemaps
-import webview
 import time
-
-# Google Maps info
-
+import cv2
+import serial.tools.list_ports
+import webview
 
 # Serial port variables
 # AutoDetect Comports and Print Port name and Device Connected
@@ -42,14 +38,13 @@ def miniMap(window):
                       + ',' + str(longitude)
                       + '&zoom=18&size=600x600&maptype=hybrid&key=AIzaSyDg0SwqnAZuPSr86Z8XlJk65atfFqLvAjw')
 
-        time.sleep(1.2)
+        time.sleep(5)
         print("changed webpage again")
 
-    # change url:
+        # change url:
         window.load_url(miniMapurl)
 
 # anything below this line will be executed after program is finished executing
-
 
 pass
 
@@ -60,11 +55,13 @@ class camThread(threading.Thread):
         threading.Thread.__init__(self)
         self.previewName = previewName
         self.camID = camID
+
     # Open Available Cameras
 
     def run(self):
         print("Starting " + self.previewName)
         camPreview(self.previewName, self.camID)
+
 
 # Show Cameras on ron and Process any edits to the stream
 
@@ -98,6 +95,7 @@ def camPreview(previewName, camID):
             break
     cv2.destroyWindow(previewName)
 
+
 # Create serial threads as follows
 
 
@@ -108,6 +106,7 @@ class serThread(threading.Thread):
         self.lock = threading.Lock()
         self.serName = serName
         self.serID = serID
+
     # Open Available Serial Ports
 
     def run(self):
@@ -181,6 +180,7 @@ def read_from_port(ser, ):
             print("Active threads", threading.activeCount())
             print("Lost Signal")
 
+
 # Camera Threads
 
 
@@ -192,7 +192,6 @@ thread4 = camThread("NV Cam", 3)  # Night Vision Camera
 # Serial Port Threads
 thread5 = serThread("USB GPS", serial_port)
 thread5.setDaemon(True)
-
 
 # Camera Threads Start
 thread1.start()
