@@ -1,16 +1,12 @@
 import datetime
 import cv2
 import threading
-import serial
 import serial.tools.list_ports
 import googlemaps
 import webview
 import time
 
 # Google Maps info
-gmaps = googlemaps.Client(key='AIzaSyA2JzMu4rLAuzid1XBcBSY2CJpvkHvqt0E')
-
-
 
 
 # Serial port variables
@@ -18,11 +14,11 @@ gmaps = googlemaps.Client(key='AIzaSyA2JzMu4rLAuzid1XBcBSY2CJpvkHvqt0E')
 print('Searching for COM Ports...')
 ports = serial.tools.list_ports.comports(include_links=False)
 for port in ports:
-    print('Found port : ' + port.device + " : Details : " + str(port) + " : " + str(port.pid))
+    print('Found port : ' + port.device + " : " + str(port.hwid))
 baud = 9600
 serial_port = serial.Serial(port.device, baud, timeout=0)
 
-#GPS Variables
+# GPS Variables
 latitude = 0
 longitude = 0
 cur_speed = 0
@@ -30,7 +26,7 @@ satLock = 0
 LongitudeDegrees = 0
 LatitudeDegrees = 0
 
-#miniMap Variables
+# miniMap Variables
 
 miniMapurl = ('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(
     longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude) + ',' + str(
@@ -41,8 +37,10 @@ def miniMap(window):
     # wait a few seconds before changing url:
     global miniMapurl
     while True:
-        miniMapurl=('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(
-            longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude) + ',' + str(longitude) + '&zoom=18&size=600x600&maptype=hybrid&key=AIzaSyDg0SwqnAZuPSr86Z8XlJk65atfFqLvAjw')
+        miniMapurl = ('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ','
+                      + str(longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude)
+                      + ',' + str(longitude)
+                      + '&zoom=18&size=600x600&maptype=hybrid&key=AIzaSyDg0SwqnAZuPSr86Z8XlJk65atfFqLvAjw')
 
         time.sleep(1.2)
         print("changed webpage again")
@@ -51,6 +49,8 @@ def miniMap(window):
         window.load_url(miniMapurl)
 
 # anything below this line will be executed after program is finished executing
+
+
 pass
 
 
@@ -66,7 +66,7 @@ class camThread(threading.Thread):
         print("Starting " + self.previewName)
         camPreview(self.previewName, self.camID)
 
-# Show Cameras on Display and Process any edits to the stream
+# Show Cameras on ron and Process any edits to the stream
 
 
 def camPreview(previewName, camID):
@@ -87,8 +87,10 @@ def camPreview(previewName, camID):
 
         date_time = today.strftime("%m/%d/%Y   %H:%M:%S.%f")[:-4]
         cv2.putText(frame, date_time, (225, 475), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(frame, 'LON :' + " " + str(longitude) + " " + str(LongitudeDegrees), (5, 20), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(frame, 'LAT :' + " " + str(latitude) + " " + str(LatitudeDegrees), (5, 40), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'LON :' + " " + str(longitude) + " " + str(LongitudeDegrees), (5, 20), font, .4,
+                    (0, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, 'LAT :' + " " + str(latitude) + " " + str(LatitudeDegrees), (5, 40), font, .4,
+                    (0, 255, 255), 1, cv2.LINE_AA)
         cv2.putText(frame, 'SAT :' + " " + str(satLock), (5, 60), font, .4, (0, 255, 255), 1, cv2.LINE_AA)
         # cv2.putText(frame, 'SPD :' + " " + str(cur_speed), (5, 80), font, .5, (0, 255, 255), 1, cv2.LINE_AA)
         key = cv2.waitKey(20)
@@ -97,6 +99,8 @@ def camPreview(previewName, camID):
     cv2.destroyWindow(previewName)
 
 # Create serial threads as follows
+
+
 class serThread(threading.Thread):
     # Create a thread for each serial port
     def __init__(self, serName, serID):
@@ -177,9 +181,6 @@ def read_from_port(ser, ):
             print("Active threads", threading.activeCount())
             print("Lost Signal")
 
-
-
-
 # Camera Threads
 
 
@@ -203,11 +204,12 @@ thread1.start()
 # Serial Port Threads Start
 thread5.start()
 
-
 # test threading
 print()
 print("Active threads", threading.activeCount())
 print()
 if __name__ == '__main__':
-    window = webview.create_window(miniMapurl, x=3075, y=1450, width=512, height=512, on_top=True, frameless=True)
+    # mini Map window location with size
+    window = webview.create_window('miniMap', miniMapurl, x=3075, y=1450, width=512,
+                                   height=512, on_top=True, frameless=True)
     webview.start(miniMap, window)
