@@ -26,7 +26,7 @@ LatitudeDegrees = 0
 
 miniMapurl = ('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(
     longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude) + ',' + str(
-    longitude) + '&zoom=18&size=600x600&maptype=hybrid&key=AIzaSyDg0SwqnAZuPSr86Z8XlJk65atfFqLvAjw')
+    longitude) + '&zoom=18&size=600x600&maptype=hybrid&key=')
 
 
 def miniMap(window):
@@ -36,7 +36,7 @@ def miniMap(window):
         miniMapurl = ('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ','
                       + str(longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude)
                       + ',' + str(longitude)
-                      + '&zoom=18&size=600x600&maptype=hybrid&key=AIzaSyDg0SwqnAZuPSr86Z8XlJk65atfFqLvAjw')
+                      + '&zoom=18&size=600x600&maptype=hybrid&key=')
 
         time.sleep(5)
         print("changed webpage again")
