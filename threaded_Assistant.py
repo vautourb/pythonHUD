@@ -1,32 +1,51 @@
 import datetime
 import os
+import pathlib
 import webbrowser
-from threading import Thread
-from queue import Queue  # Python 3 import
+import threading
+from queue import Queue
+from requests import get
+import wmi
+import netifaces
 import psutil
 import pyautogui
 import pyttsx3
 import wikipedia
 import speech_recognition as sr
+import smtplib
 
-assistant = "Tombs"
+import win32gui
+import win32process
+from scapy.layers.l2 import ARP, Ether
+from scapy.sendrecv import srp
+import socket
+import sys
+
 user = "Blaine"
-
-
 
 r = sr.Recognizer()
 audio_queue = Queue()
 
 
 def speak(audio):
-    engine = pyttsx3.init()
+    engine = pyttsx3.init('sapi5')
     # getter method(gets the current value
     # of engine property)
     voices = engine.getProperty('voices')
+#    for voice in voices:
+#        print("Voice:")
+#        print(" - ID: %s" % voice.id)
+#        print(" - Name: %s" % voice.name)
+#        print(" - Languages: %s" % voice.languages)
+#        print(" - Gender: %s" % voice.gender)
+#        print(" - Age: %s" % voice.age)
 
     # setter method .[0]=male voice and
     # [1]=female voice in set Property.
-    engine.setProperty('voice', voices[0].id)
+    en_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\IVONA 2 Voice Brian22"
+    engine.setProperty('voice', en_voice_id)
+    newVoiceRate = 165
+    engine.setProperty('rate', newVoiceRate)
 
     # Method for the speaking of the the assistant
     engine.say(audio)
@@ -36,15 +55,22 @@ def speak(audio):
     engine.runAndWait()
 
 
+speak("system is initializing!...")
+
+speak("Running boot sequence!...")
+
+speak("Updating databases!...")
+
+
 def greet():
-    hour = datetime.datetime.now().hour
-    if (hour >= 6) and (hour < 12):
-        speak(f"Good Morning {user}")
+    hour = int(datetime.datetime.now().hour)
+    if (hour >= 0) and (hour < 12):
+        speak(f"Good Morning! {user}")
     elif (hour >= 12) and (hour < 18):
-        speak(f"Good afternoon {user}")
+        speak(f"Good afternoon! {user}")
     elif (hour >= 18) and (hour < 21):
-        speak(f"Good Evening {user}")
-    speak("How may I assist you?")
+        speak(f"Good Evening! {user}")
+    # speak("How may I assist you?")
 
 
 def tellDay():
@@ -71,11 +97,20 @@ def tellTime():
 
     # the time will be displayed like
     # this "2020-06-05 17:50:14.582630"
-    # nd then after slicing we can get time
+    # and then after slicing we can get time
     print(time)
     hour = time[11:13]
     min = time[14:16]
     speak("The time sir is" + hour + "Hours and" + min + "Minutes")
+
+
+def sendEmail(to, content):
+    server = smtplib.SMTP('smtp.zoho.com', 587)
+    server.ehlo()
+    server.starttls()
+    server.login('blaine.vautour@bhconsultants.ca', '13Nmpv13')
+    server.sendmail('blaine.vautour@bhconsultants.ca', to, content)
+    server.close()
 
 
 def recognize_worker():
@@ -96,25 +131,25 @@ def recognize_worker():
 
             if "open google" in query:
                 speak("Opening google ")
-
-                # in the open method we just to give the link
-                # of the website and it automatically open
-                # it in your default browser
                 webbrowser.open("www.google.com")
+                continue
+            elif "hello" in query:
+                greet()
                 continue
             elif "what day is it" in query:
                 tellDay()
                 continue
-            elif "tell me the time" in query:
+            elif "what time is it" in query:
                 tellTime()
+                continue
+            elif "users" in query:
+                users = psutil.users()
+                for user in users:
+                    speak("User" + str(user.name) + "on terminal" + str(user.terminal) + "from host" + str(user.host))
                 continue
             elif "from wikipedia" in query:
                 speak("Checking the wikipedia ")
                 query = query.replace("wikipedia", "")
-
-                # it will give the summary of 4 lines from
-                # wikipedia we can increase and decrease
-                # it also.
                 result = wikipedia.summary(query, sentences=4)
                 speak("According to wikipedia")
                 speak(result)
@@ -151,11 +186,12 @@ def recognize_worker():
             elif "where is" in query:
                 query = query.split(" ")
                 location_url = "https://www.google.com/maps/place/" + str(query[2])
-                speak("Hold on " + user + ", I will show you where " + query[2] + " is.")
+                speak("Hold on I will show you where " + query[2] + " is.")
                 maps_arg = webbrowser.open(location_url)
                 os.system(maps_arg)
                 continue
-            # system info commands
+
+            #               system info commands
 
             elif "cpu" in query:
                 speak(f"Cpu is at {str(psutil.cpu_percent())} percent")
@@ -164,10 +200,25 @@ def recognize_worker():
                 ram_Used = psutil.virtual_memory()
                 speak(f"RAM is at {str(ram_Used.percent)} percent")
                 continue
-            #########################################################################
-            #
+
+            elif "total memory" in query:
+                ram_Used = psutil.virtual_memory()
+                ram_Total = ram_Used.total >> 30
+                speak(f"My system has {ram_Total} Gigs of ram")
+                continue
+
+            elif "drive status" in query:
+                disk = psutil.disk_usage('/')
+                free = round(disk.free / 1024.0 / 1024.0 / 1024.0, 1)
+                total = round(disk.total / 1024.0 / 1024.0 / 1024.0, 1)
+                disk_info = str(free) + 'GigaBytes free / ' + str(total) + 'GigaBytes total ( ' + str(
+                    disk.percent) + '% )'
+                speak(str(free) + "GigaBytes free")
+                speak(str(total) + "Total GigaBytes")
+                continue
+
             #                  WINDOWS COMMANDS
-            #
+
             elif "lock computer" in query:
                 pyautogui.keyDown('win')
                 pyautogui.press('i')
@@ -191,12 +242,9 @@ def recognize_worker():
                 os.system("shutdown /a")
                 speak("Aborting system countdown!")
                 continue
-                ###############################################
-                #
-                #       ACTIVE VOICE WINDOWS 10 FUNCTIONS
-                #          CONTROLS SCREEN LAYOUT
-                #
-                ###############################################
+
+            #          ACTIVE VOICE WINDOWS 10 FUNCTIONS
+            #          CONTROLS SCREEN LAYOUT
 
             elif "windows settings" in query:
                 pyautogui.keyDown('win')
@@ -208,18 +256,232 @@ def recognize_worker():
                 pyautogui.press('a')
                 pyautogui.keyUp('win')
                 continue
-                ###############################################
-                #
-                #       ACTIVE VOICE DISPLAY WINDOW FUNCTIONS
-                #          CONTROLS SCREEN LAYOUT
-                #
-                ###############################################
 
+            #       ACTIVE VOICE DISPLAY WINDOW FUNCTIONS
+            #          CONTROLS SCREEN LAYOUT
 
-            #########################################################################
-            #
+            elif "minimize" in query:
+                query = query.replace("minimize", "")
+                stopwords = ['minimize', 'to', 'close', 'search', 'can', 'you']
+                querywords = query.split()
+                resultwords = [word for word in querywords if word.lower() not in stopwords]
+                result = ' '.join(resultwords).strip()
+                strCmd = result
+                # map type, the key value is the process ID, and the value is the window handle.
+                mID2Handle = {}
+                # print(strCmd)
+                pro_found = [False]
+
+                def get_all_hwnd(hwnd, mouse, pro_found):
+                    if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
+                        nID = win32process.GetWindowThreadProcessId(hwnd)
+                        print(nID, win32gui.GetWindowText(hwnd))
+                        # del nID[0]
+                        if nID is not None:
+                            print("\n{}\n".format(nID))
+                        for abc in nID:
+                            try:
+                                pro = psutil.Process(abc).name().lower()
+                                print(pro)
+                            except psutil.NoSuchProcess:
+                                print("no such process: {strCmd}")
+                                pass
+                            else:
+                                print(abc, win32gui.GetWindowText(hwnd))
+                                if strCmd in pro:
+                                    pro_found[0] = True
+                                    print("Process ID:", abc, "window handle: ", hwnd, " title: ",
+                                          win32gui.GetWindowText(hwnd))
+                                    mID2Handle[abc] = hwnd
+                                    win32gui.ShowWindow(hwnd, 6)
+                                    win32gui.SetForegroundWindow(hwnd)
+                                    win32gui.SetActiveWindow(hwnd)
+
+                win32gui.EnumWindows(lambda hwnd, mouse: get_all_hwnd(hwnd, mouse, pro_found), 0)
+                if pro_found[0] is False:
+                    speak("could not find{}".format(strCmd))
+                continue
+
+            elif "maximize" in query:
+                query = query.replace("maximize", "")
+                stopwords = ['maximize', 'to', 'close', 'search', 'can', 'you']
+                querywords = query.split()
+                resultwords = [word for word in querywords if word.lower() not in stopwords]
+                result = ' '.join(resultwords).strip()
+                strCmd = result
+                # map type, the key value is the process ID, and the value is the window handle.
+                mID2Handle = {}
+                # print(strCmd)
+                pro_found = [False]
+
+                def get_all_hwnd(hwnd, mouse, pro_found):
+                    if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
+                        nID = win32process.GetWindowThreadProcessId(hwnd)
+                        print(nID, win32gui.GetWindowText(hwnd))
+                        # del nID[0]
+                        if nID is not None:
+                            print("\n{}\n".format(nID))
+                        for abc in nID:
+                            try:
+                                pro = psutil.Process(abc).name().lower()
+                                print(pro)
+                            except psutil.NoSuchProcess:
+                                print("no such process: {strCmd}")
+                                pass
+                            else:
+                                print(abc, win32gui.GetWindowText(hwnd))
+                                if strCmd in pro:
+                                    pro_found[0] = True
+                                    print("Process ID:", abc, "window handle: ", hwnd, " title: ",
+                                          win32gui.GetWindowText(hwnd))
+                                    mID2Handle[abc] = hwnd
+                                    win32gui.ShowWindow(hwnd, 3)
+                                    win32gui.SetForegroundWindow(hwnd)
+                                    win32gui.SetActiveWindow(hwnd)
+
+                win32gui.EnumWindows(lambda hwnd, mouse: get_all_hwnd(hwnd, mouse, pro_found), 0)
+                if pro_found[0] is False:
+                    speak("could not find{}".format(strCmd))
+                continue
+
+            elif "switch to" in query:
+                query = query.replace("switch", "").replace("to", "")
+                stopwords = ['switch', 'to', 'close', 'search', 'can', 'you']
+                querywords = query.split()
+                resultwords = [word for word in querywords if word.lower() not in stopwords]
+                result = ' '.join(resultwords).strip()
+                strCmd = result
+                # map type, the key value is the process ID, and the value is the window handle.
+                mID2Handle = {}
+                # print(strCmd)
+                pro_found = [False]
+
+                def get_all_hwnd(hwnd, mouse, pro_found):
+                    if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
+                        nID = win32process.GetWindowThreadProcessId(hwnd)
+                        print(nID, win32gui.GetWindowText(hwnd))
+                        # del nID[0]
+                        if nID is not None:
+                            print("\n{}\n".format(nID))
+                        for abc in nID:
+                            try:
+                                pro = psutil.Process(abc).name().lower()
+                                print(pro)
+                            except psutil.NoSuchProcess:
+                                print("no such process: {strCmd}")
+                                pass
+                            else:
+                                print(abc, win32gui.GetWindowText(hwnd))
+                                if strCmd in pro:
+                                    pro_found[0] = True
+                                    print("Process ID:", abc, "window handle: ", hwnd, " title: ",
+                                          win32gui.GetWindowText(hwnd))
+                                    mID2Handle[abc] = hwnd
+                                    win32gui.ShowWindow(hwnd, 9)
+                                    win32gui.SetForegroundWindow(hwnd)
+                                    win32gui.SetActiveWindow(hwnd)
+
+                win32gui.EnumWindows(lambda hwnd, mouse: get_all_hwnd(hwnd, mouse, pro_found), 0)
+                if pro_found[0] is False:
+                    speak("could not find{}".format(strCmd))
+                continue
+
+            elif "top left corner" in query:
+                query = query.replace("top", "").replace("left", "")
+                stopwords = ['top', 'corner', 'window', 'left', 'close', 'search', 'can', 'you']
+                querywords = query.split()
+                resultwords = [word for word in querywords if word.lower() not in stopwords]
+                result = ' '.join(resultwords).strip()
+                strCmd = result
+                # map type, the key value is the process ID, and the value is the window handle.
+                mID2Handle = {}
+                # print(strCmd)
+                pro_found = [False]
+
+                def get_all_hwnd(hwnd, mouse, pro_found):
+                    if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
+                        nID = win32process.GetWindowThreadProcessId(hwnd)
+                        print(nID, win32gui.GetWindowText(hwnd))
+                        # del nID[0]
+                        if nID is not None:
+                            print("\n{}\n".format(nID))
+                        for abc in nID:
+                            try:
+                                pro = psutil.Process(abc).name().lower()
+                                print(pro)
+                            except psutil.NoSuchProcess:
+                                print("no such process: {strCmd}")
+                                pass
+                            else:
+                                print(abc, win32gui.GetWindowText(hwnd))
+                                if strCmd in pro:
+                                    pro_found[0] = True
+                                    print("Process ID:", abc, "window handle: ", hwnd, " title: ",
+                                          win32gui.GetWindowText(hwnd))
+                                    win32gui.MoveWindow(hwnd, 0 - 7, 0, 1920, 1080, True)
+                                    mID2Handle[abc] = hwnd
+                                    win32gui.ShowWindow(hwnd, 9)
+                                    win32gui.SetForegroundWindow(hwnd)
+                                    win32gui.SetActiveWindow(hwnd)
+
+                win32gui.EnumWindows(lambda hwnd, mouse: get_all_hwnd(hwnd, mouse, pro_found), 0)
+                if pro_found[0] is False:
+                    speak("could not find{}".format(strCmd))
+                continue
+
+            #           NETWORKING
+
+            elif "what is my external ip" in query:
+                speak("Attempting to get external ip")
+                ip = get('https://api.ipify.org').text
+                speak('My public IP address is: {}'.format(ip))
+                continue
+
+            elif "network discovery" in query:
+                speak("Searching for active network devices")
+                query = query.replace("scan network", "")
+                stopwords = ['scan network', 'close', 'search', 'can', 'you']
+                querywords = query.split()
+                resultwords = [word for word in querywords if word.lower() not in stopwords]
+                result = ' '.join(resultwords).strip()
+                speak("Pinging devices")
+                gateways = netifaces.gateways()
+                default_gateway = gateways['default'][netifaces.AF_INET][0]
+                target_ip = default_gateway + "/24"
+                arp = ARP(pdst=target_ip)
+                ether = Ether(dst="ff:ff:ff:ff:ff:ff")
+                packet = ether / arp
+                result = srp(packet, timeout=3, verbose=0)[0]
+                clients = []
+                speak("Waiting for devices to respond")
+                for sent, received in result:
+                    # for each response, append ip and mac address to `clients` list
+                    clients.append({'ip': received.psrc, 'mac': received.hwsrc})
+
+                # print clients
+
+                print("Available devices in the network: {}".format(len(clients)))
+                for client in clients:
+                    try:
+                        host_name = socket.gethostbyaddr(client["ip"])
+                    except socket.herror as e:
+                        print("Problem with ip: {}".format(client["ip"]))
+                        client["host_name"] = "Unknown"
+                        continue
+
+                    print(host_name)
+                    client["host_name"] = host_name[0]
+
+                file_name = "NetworkReachableIP.csv"
+                save_file_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "", "db", "Network", file_name)
+                with open(save_file_path, "w") as fs:
+                    for client in clients:
+                        fs.write("{0},{1},{2}\n".format(client['ip'], client['mac'], client["host_name"]))
+                speak("Network devices discovered: {}".format(len(clients)))
+                speak("The IP address, Mac Address and Hostnames have been recorded to the database")
+                continue
+
             #               WINDOWS PROGRAM OPTIONS
-            #
 
             elif "show desktop" in query:
                 pyautogui.keyDown('win')
@@ -280,6 +542,24 @@ def recognize_worker():
                 pyautogui.press('printscreen')
                 continue
 
+
+            #########################################################################
+            #
+            #               EMAIL
+            #
+
+            elif "send email" in query:
+                try:
+                    speak("What should I say?")
+                    content = query()
+                    to = "vautourb@live.com"
+                    sendEmail(to, content)
+                    speak("Email has been sent!")
+                except Exception as e:
+                    print(e)
+                    speak("Sorry my friend. I am not able to send this email")
+                continue
+
             #########################################################################
             #
             #           QUIT PROGRAM
@@ -301,17 +581,24 @@ def recognize_worker():
 
 
 # start a new thread to recognize audio, while this thread focuses on listening
-recognize_thread = Thread(target=recognize_worker)
-recognize_thread.daemon = True
-recognize_thread.start()
+
+
 with sr.Microphone() as source:
     try:
         while True:  # repeatedly listen for phrases and put the resulting audio on the audio processing job queue
             audio_queue.put(r.listen(source))
-            r.adjust_for_ambient_noise(source, duration=.05)
+            r.SAMPLE_RATE = 44000
+            r.adjust_for_ambient_noise(source, duration=5)
+            print()
+            print("Active threads", threading.activeCount())
+            print()
     except KeyboardInterrupt:  # allow Ctrl + C to shut down the program
         pass
 
+
+recognize_thread = threading.Thread(target=recognize_worker)
+recognize_thread.daemon = True
+recognize_thread.start()
 audio_queue.join()  # block until all current audio processing jobs are done
 audio_queue.put(None)  # tell the recognize_thread to stop
 recognize_thread.join()  # wait for the recognize_thread to actually stop
