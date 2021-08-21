@@ -1,9 +1,17 @@
+import os
 import datetime
 import threading
 import time
 import cv2
 import serial.tools.list_ports
 import webview
+import googlemaps
+
+
+## start assistant
+os.system("python ./threaded_Assistant.py")
+# Google Maps info
+gmaps = googlemaps.Client(key="")
 
 # Serial port variables
 # AutoDetect Comports and Print Port name and Device Connected
@@ -24,29 +32,10 @@ LatitudeDegrees = 0
 
 # miniMap Variables
 
-miniMapurl = ('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ',' + str(
-    longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude) + ',' + str(
-    longitude) + '&zoom=18&size=600x600&maptype=hybrid&key=')
+miniMapurl = ("https://maps.googleapis.com/maps/api/staticmap?center=" + str(latitude) + ',' + str(longitude) + "&zoom=20&size=600x600&maptype=hybrid&key=")
 
 
-def miniMap(window):
-    # wait a few seconds before changing url:
-    global miniMapurl
-    while True:
-        miniMapurl = ('https://maps.googleapis.com/maps/api/staticmap?center=' + str(latitude) + ','
-                      + str(longitude) + '&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|' + str(latitude)
-                      + ',' + str(longitude)
-                      + '&zoom=18&size=600x600&maptype=hybrid&key=')
 
-        time.sleep(5)
-        print("changed webpage again")
-
-        # change url:
-        window.load_url(miniMapurl)
-
-# anything below this line will be executed after program is finished executing
-
-pass
 
 
 class camThread(threading.Thread):
@@ -71,12 +60,14 @@ def camPreview(previewName, camID):
 
     cam = cv2.VideoCapture(camID, cv2.CAP_DSHOW)
     if cam.isOpened():
+
         cv2.setWindowProperty(previewName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
         rval, frame = cam.read()
     else:
         rval = False
 
     while rval:
+
         cv2.imshow(previewName, frame)
         rval, frame = cam.read()
         font = cv2.FONT_HERSHEY_DUPLEX
@@ -94,6 +85,23 @@ def camPreview(previewName, camID):
         if key == 27:  # exit on ESC
             break
     cv2.destroyWindow(previewName)
+
+def miniMap(window):
+    # wait a few seconds before changing url:
+    global miniMapurl
+    while True:
+        miniMapurl = ("https://maps.googleapis.com/maps/api/staticmap?center=" + str(latitude) + ',' + str(longitude) + "&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|&zoom=20&size=600x600&maptype=hybrid&key=")
+
+        time.sleep(20)
+        print("minimap thread")
+
+        # change url:
+        window.load_url(miniMapurl)
+
+
+# anything below this line will be executed after program is finished executing
+
+pass
 
 
 # Create serial threads as follows
@@ -171,6 +179,7 @@ def read_from_port(ser, ):
 
                     print()
                     print("Active threads", threading.activeCount())
+                    print("Thread Name", threading.get_ident())
                     print("Sat Lock : " + satLock + " " + "Longitude : " + longitude + "°" + data[
                         6] + " Latitude : " + latitude + "°" + data[
                               4] + " Spd  : " + str(cur_speed) + " Km/h")
@@ -206,6 +215,7 @@ thread5.start()
 # test threading
 print()
 print("Active threads", threading.activeCount())
+print("Thread Name", threading.get_ident())
 print()
 if __name__ == '__main__':
     # mini Map window location with size
