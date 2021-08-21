@@ -32,13 +32,13 @@ def speak(audio):
     # getter method(gets the current value
     # of engine property)
     voices = engine.getProperty('voices')
-    for voice in voices:
-        print("Voice:")
-        print(" - ID: %s" % voice.id)
-        print(" - Name: %s" % voice.name)
-        print(" - Languages: %s" % voice.languages)
-        print(" - Gender: %s" % voice.gender)
-        print(" - Age: %s" % voice.age)
+#    for voice in voices:
+#        print("Voice:")
+#        print(" - ID: %s" % voice.id)
+#        print(" - Name: %s" % voice.name)
+#        print(" - Languages: %s" % voice.languages)
+#        print(" - Gender: %s" % voice.gender)
+#        print(" - Age: %s" % voice.age)
 
     # setter method .[0]=male voice and
     # [1]=female voice in set Property.
@@ -581,22 +581,24 @@ def recognize_worker():
 
 
 # start a new thread to recognize audio, while this thread focuses on listening
-recognize_thread = threading.Thread(target=recognize_worker)
-recognize_thread.daemon = True
-recognize_thread.start()
+
 
 with sr.Microphone() as source:
     try:
         while True:  # repeatedly listen for phrases and put the resulting audio on the audio processing job queue
             audio_queue.put(r.listen(source))
             r.SAMPLE_RATE = 44000
-            r.adjust_for_ambient_noise(source, duration=0.2)
+            r.adjust_for_ambient_noise(source, duration=5)
             print()
             print("Active threads", threading.activeCount())
             print()
     except KeyboardInterrupt:  # allow Ctrl + C to shut down the program
         pass
 
+
+recognize_thread = threading.Thread(target=recognize_worker)
+recognize_thread.daemon = True
+recognize_thread.start()
 audio_queue.join()  # block until all current audio processing jobs are done
 audio_queue.put(None)  # tell the recognize_thread to stop
 recognize_thread.join()  # wait for the recognize_thread to actually stop
