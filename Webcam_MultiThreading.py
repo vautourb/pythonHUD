@@ -1,4 +1,4 @@
-import os
+import subprocess
 import datetime
 import threading
 import time
@@ -6,12 +6,12 @@ import cv2
 import serial.tools.list_ports
 import webview
 import googlemaps
+import serial
 
 
-## start assistant
-os.system("python ./threaded_Assistant.py")
+
 # Google Maps info
-gmaps = googlemaps.Client(key="")
+gmaps = googlemaps.Client(key="AIzaSyAXyjUTd63knxXyHIpFhCuacMlUjIKwBos")
 
 # Serial port variables
 # AutoDetect Comports and Print Port name and Device Connected
@@ -32,7 +32,7 @@ LatitudeDegrees = 0
 
 # miniMap Variables
 
-miniMapurl = ("https://maps.googleapis.com/maps/api/staticmap?center=" + str(latitude) + ',' + str(longitude) + "&zoom=20&size=600x600&maptype=hybrid&key=")
+miniMapurl = ("https://maps.googleapis.com/maps/api/staticmap?center=" + str(latitude) + ',' + str(longitude) + "&zoom=20&size=600x600&maptype=hybrid&key=AIzaSyAXyjUTd63knxXyHIpFhCuacMlUjIKwBos")
 
 
 
@@ -90,7 +90,7 @@ def miniMap(window):
     # wait a few seconds before changing url:
     global miniMapurl
     while True:
-        miniMapurl = ("https://maps.googleapis.com/maps/api/staticmap?center=" + str(latitude) + ',' + str(longitude) + "&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|&zoom=20&size=600x600&maptype=hybrid&key=")
+        miniMapurl = ("https://maps.googleapis.com/maps/api/staticmap?center=" + str(latitude) + ',' + str(longitude) + "&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|&zoom=20&size=600x600&maptype=hybrid&key=AIzaSyAXyjUTd63knxXyHIpFhCuacMlUjIKwBos")
 
         time.sleep(20)
         print("minimap thread")
@@ -222,3 +222,5 @@ if __name__ == '__main__':
     window = webview.create_window('miniMap', miniMapurl, x=3075, y=1450, width=512,
                                    height=512, on_top=True, frameless=True)
     webview.start(miniMap, window)
+    ## start assistant
+    subprocess.Popen("threaded_Assistant.py 1", shell=True)
