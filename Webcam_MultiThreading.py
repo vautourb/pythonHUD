@@ -11,7 +11,7 @@ import serial
 
 
 # Google Maps info
-gmaps = googlemaps.Client(key="AIzaSyAXyjUTd63knxXyHIpFhCuacMlUjIKwBos")
+gmaps = googlemaps.Client(key="")
 
 # Serial port variables
 # AutoDetect Comports and Print Port name and Device Connected
@@ -32,7 +32,7 @@ LatitudeDegrees = 0
 
 # miniMap Variables
 
-miniMapurl = ("https://maps.googleapis.com/maps/api/staticmap?center=" + str(latitude) + ',' + str(longitude) + "&zoom=20&size=600x600&maptype=hybrid&key=AIzaSyAXyjUTd63knxXyHIpFhCuacMlUjIKwBos")
+miniMapurl = ("https://maps.googleapis.com/maps/api/staticmap?center=" + str(latitude) + ',' + str(longitude) + "&zoom=20&size=600x600&maptype=hybrid&key=")
 
 
 
@@ -90,7 +90,7 @@ def miniMap(window):
     # wait a few seconds before changing url:
     global miniMapurl
     while True:
-        miniMapurl = ("https://maps.googleapis.com/maps/api/staticmap?center=" + str(latitude) + ',' + str(longitude) + "&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|&zoom=20&size=600x600&maptype=hybrid&key=AIzaSyAXyjUTd63knxXyHIpFhCuacMlUjIKwBos")
+        miniMapurl = ("https://maps.googleapis.com/maps/api/staticmap?center=" + str(latitude) + ',' + str(longitude) + "&markers=icon:https://i.ibb.co/pZRVFfv/gmap-Team-Icon.png|&zoom=20&size=600x600&maptype=hybrid&key=")
 
         time.sleep(20)
         print("minimap thread")
