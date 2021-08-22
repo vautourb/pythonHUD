@@ -104,15 +104,6 @@ def tellTime():
     speak("The time sir is" + hour + "Hours and" + min + "Minutes")
 
 
-def sendEmail(to, content):
-    server = smtplib.SMTP('smtp.zoho.com', 587)
-    server.ehlo()
-    server.starttls()
-    server.login('blaine.vautour@bhconsultants.ca', '13Nmpv13')
-    server.sendmail('blaine.vautour@bhconsultants.ca', to, content)
-    server.close()
-
-
 def recognize_worker():
     # this runs in a background thread
     while True:
